@@ -1,11 +1,12 @@
 import { SHeader } from "./styles";
 import { Link } from "react-router-dom";
+import logo from "../../assets/img/logo.svg";
 
 export function Header() {
   return (
     <SHeader>
       <Link to="/">
-        <img src="/img/logo.svg" alt="Imagem da logo do site" />
+        <img src={logo} alt="Imagem da logo do site" />
       </Link>
 
       <input type="checkbox" id="menu" />

@@ -1,4 +1,5 @@
 import { SFooter } from "./styles";
+import logoinstagram from "../../assets/img/logoinstagram.svg";
 
 export function Footer() {
     return (
@@ -7,7 +8,7 @@ export function Footer() {
             Siga nossa página
             </aside>
             <a href="https://www.instagram.com/" target="_blank">
-            <img src="./img/logoinstagram.svg" alt="Logo do Instagram" />
+            <img src={logoinstagram} alt="Logo do Instagram" />
             </a>
         </SFooter>
     )
