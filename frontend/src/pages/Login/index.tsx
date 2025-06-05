@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { Header } from "../../components/Header";
+import { Footer } from "../../components/Footer";
+
 import {
   Container,
   FormSection,
@@ -11,8 +14,9 @@ import {
   Button,
   ErrorMessage
 } from "./styles";
-import senha from "../../assets/senha.svg";
 
+import senha from "../../assets/senha.svg";
+import emailIcon from "../../assets/email.svg"; 
 export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,43 +45,49 @@ export function Login() {
   };
 
   return (
-    <Container>
-      <FormSection onSubmit={handleSubmit}>
-        <Title>LOGIN</Title>
+    <>
+      <Header />
 
-        {error && <ErrorMessage>{error}</ErrorMessage>}
+      <Container>
+        <FormSection onSubmit={handleSubmit}>
+          <Title>LOGIN</Title>
 
-        <InputGroup>
-          <img src={email} alt="Ícone e-mail" />
-          <Input
-            type="email"
-            placeholder="Email:"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </InputGroup>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
 
-        <InputGroup>
-          <img src={senha} alt="Ícone chave" />
-          <Input
-            type="password"
-            placeholder="Senha:"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </InputGroup>
+          <InputGroup>
+            <img src={emailIcon} alt="Ícone e-mail" />
+            <Input
+              type="email"
+              placeholder="Email:"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </InputGroup>
 
-        <ButtonGroup>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Entrando..." : "Entrar"}
-          </Button>
-          <Link to="/register">
-            <Button type="button">Cadastrar</Button>
-          </Link>
-        </ButtonGroup>
-      </FormSection>
-    </Container>
+          <InputGroup>
+            <img src={senha} alt="Ícone chave" />
+            <Input
+              type="password"
+              placeholder="Senha:"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </InputGroup>
+
+          <ButtonGroup>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Entrando..." : "Entrar"}
+            </Button>
+            <Link to="/register">
+              <Button type="button">Cadastrar</Button>
+            </Link>
+          </ButtonGroup>
+        </FormSection>
+      </Container>
+
+      <Footer />
+    </>
   );
 }

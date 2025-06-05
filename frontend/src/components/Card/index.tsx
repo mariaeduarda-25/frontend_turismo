@@ -1,4 +1,3 @@
-// src/components/Card/index.tsx
 import { SCard } from "./styles";
 
 interface CardProps {
