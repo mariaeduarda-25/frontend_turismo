@@ -3,9 +3,9 @@ import { Footer } from "../../components/Footer";
 import { Card } from "../../components/Card";
 import { Container, Section } from "./styles";
 
-import teleferico from "../../assets/img/teleferico-campos-jordao.svg";
-import naufragio from "../../assets/img/passeio-fernandodenoronha.svg";
-import canion from "../../assets/img/tour-canion.svg";
+import teleferico from "../../assets/teleferico-campos-jordao.svg";
+import naufragio from "../../assets/passeio-fernandodenoronha.svg";
+import canion from "../../assets/tour-canion.svg";
 
 export function Passeios() {
   const passeios = [

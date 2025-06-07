@@ -1,5 +1,5 @@
 import { SFooter } from "./styles";
-import logoinstagram from "../../assets/img/logoinstagram.svg";
+import logoinstagram from "../../assets/logoinstagram.svg";
 
 export function Footer() {
     return (

@@ -1,6 +1,6 @@
 import { SHeader } from "./styles";
 import { Link } from "react-router-dom";
-import logo from "../../assets/img/logo.svg";
+import logo from "../../assets/logo.svg";
 
 export function Header() {
   return (
@@ -19,10 +19,18 @@ export function Header() {
         </label>
 
         <div>
-          <Link to="/hospedagens" className="botao">Hospedagens</Link>
-          <Link to="/passeios" className="botao">Passeios</Link>
-          <Link to="/avaliacoes" className="botao">Avaliações</Link>
-          <Link to="/login" className="botao"><strong>Login</strong></Link>
+          <Link to="/hospedagens" className="botao">
+            Hospedagens
+          </Link>
+          <Link to="/passeios" className="botao">
+            Passeios
+          </Link>
+          <Link to="/avaliacoes" className="botao">
+            Avaliações
+          </Link>
+          <Link to="/login" className="botao">
+            <strong>Login</strong>
+          </Link>
         </div>
       </nav>
     </SHeader>

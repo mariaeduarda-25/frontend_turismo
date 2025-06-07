@@ -3,9 +3,9 @@ import { Footer } from "../../components/Footer";
 import { Card } from "../../components/Card";
 import { Container, Section } from "./styles";
 
-import chateau from "../../assets/img/chateau-la-villette.svg";
-import nanai from "../../assets/img/pousada-nanai.svg";
-import colline from "../../assets/img/hotel-colline-de-france.svg";
+import chateau from "../../assets/chateau-la-villette 1.svg";
+import nanai from "../../assets/pousada-nanai.svg";
+import colline from "../../assets/hotel-colline-de-france 1.svg";
 
 export function Hospedagem() {
   const hospedagens = [

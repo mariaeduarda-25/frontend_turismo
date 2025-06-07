@@ -7,9 +7,9 @@ export function App() {
   return (
     <AuthProvider>
       <GlobalStyle />
-      <CommentProvider>
-        <RouteWeb />
-      </CommentProvider>
+        <CommentProvider>
+          <RouteWeb />
+        </CommentProvider>
     </AuthProvider>
   );
 }
