@@ -1,34 +1,68 @@
+import { useState } from "react";
+import { Navigate } from "react-router-dom";
 import { Header } from "../../components/Header";
 import { Footer } from "../../components/Footer";
-import { Container, Section, InputGroup, Button } from "./styles";
+import { Container, AvaliacaoList, AvaliacaoItem } from "./styles";
+import { AvaliacaoForm } from "../../components/AvaliacaoForm";
+import { mockComments } from "../../mocks/CommentMock";
+import { mockUsers } from "../../mocks/UserMock";
+import type { CommentProps } from "../../types/CommentType";
+import { useAuth } from "../../contexts/AuthContext";
 
 export function Avaliacoes() {
+  const { currentUser } = useAuth();
+  const postId = "post-1";
+
+  const [avaliacoes, setAvaliacoes] = useState<CommentProps[]>(
+    mockComments.filter((comment) => comment.postId === postId)
+  );
+
+  const getUserNameById = (userId: string) => {
+    const user = mockUsers.find((u) => u.id === userId);
+    return user ? user.name : "Usuário Desconhecido";
+  };
+
+  const handleSubmit = (data: { comment: string }) => {
+    if (!currentUser) return;
+
+    const novaAvaliacao: CommentProps = {
+      id: `comment-${Date.now()}`,
+      postId,
+      userId: currentUser.id,
+      comment: data.comment,
+      data: new Date().toLocaleDateString("pt-BR"),
+    };
+    setAvaliacoes([...avaliacoes, novaAvaliacao]);
+  };
+
+  if (!currentUser) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <>
       <Header />
-
       <Container>
-        <Section>
-          <h2>Escreva uma Avaliação</h2>
+        <div style={{ flex: 1 }}>
+          <h2>Avaliações</h2>
+          {avaliacoes.length === 0 ? (
+            <p>Nenhuma avaliação cadastrada ainda.</p>
+          ) : (
+            <AvaliacaoList>
+              {avaliacoes.map((avaliacao) => (
+                <AvaliacaoItem key={avaliacao.id}>
+                  <strong>{avaliacao.data}</strong> —{" "}
+                  <em>{getUserNameById(avaliacao.userId)}</em>: {avaliacao.comment}
+                </AvaliacaoItem>
+              ))}
+            </AvaliacaoList>
+          )}
+        </div>
 
-          <InputGroup>
-            <input type="text" placeholder="Nome Completo:" required />
-          </InputGroup>
-
-          <InputGroup>
-            <textarea
-              placeholder="Comentário:"
-              required
-              minLength={20}
-              maxLength={200}
-              rows={5}
-            />
-          </InputGroup>
-
-          <Button>Enviar</Button>
-        </Section>
+        <div style={{ flex: 1 }}>
+          <AvaliacaoForm postId={postId} onSubmit={handleSubmit} />
+        </div>
       </Container>
-
       <Footer />
     </>
   );

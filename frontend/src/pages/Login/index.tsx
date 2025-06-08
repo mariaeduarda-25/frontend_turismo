@@ -36,7 +36,7 @@ export function Login() {
 
     try {
       await login(email, password);
-      navigate("/");
+      navigate("/Avaliacoes");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Falha no login");
     } finally {
@@ -80,7 +80,7 @@ export function Login() {
             <Button type="submit" disabled={isLoading}>
               {isLoading ? "Entrando..." : "Entrar"}
             </Button>
-            <Link to="/register">
+            <Link to="/cadastro">
               <Button type="button">Cadastrar</Button>
             </Link>
           </ButtonGroup>

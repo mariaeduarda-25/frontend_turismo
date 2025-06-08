@@ -5,3 +5,4 @@ export interface UserProps {
     password?: string
     role: "admin" | "user"
   }
+  

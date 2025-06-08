@@ -6,10 +6,10 @@ import { CommentProvider } from "./contexts/CommentContext";
 export function App() {
   return (
     <AuthProvider>
-      <GlobalStyle />
-        <CommentProvider>
-          <RouteWeb />
-        </CommentProvider>
+      <CommentProvider>
+        <GlobalStyle />
+        <RouteWeb />
+      </CommentProvider>
     </AuthProvider>
   );
 }

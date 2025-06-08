@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { colors } from "../../styles/GlobalStyle";
 
 export const Container = styled.main`
   flex: 1;
@@ -6,10 +7,13 @@ export const Container = styled.main`
   justify-content: center;
   align-items: center;
   padding: 7rem;
+  min-height: calc(100vh - 7.6rem);
+  margin: 0 auto;
+  padding: 2rem;
 `;
 
 export const FormSection = styled.form`
-  background: var(--secondary, #cff6f7);
+  background-color: ${colors.secondary};
   padding: 2rem;
   border: 1px solid black;
   border-radius: 15px;
@@ -28,10 +32,10 @@ export const InputGroup = styled.div`
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
-  border: 1px solid #ccc;
+  border: 1px solid black;
   border-radius: 10px;
   padding: 0.5rem 1rem;
-  background: white;
+  background-color: ${colors.secondary};
 
   img {
     width: 24px;
@@ -59,14 +63,14 @@ export const ButtonGroup = styled.div`
 `;
 
 export const Button = styled.button`
-  background-color: #e7b3fc;
+  background-color: ${colors.primary};
   padding: 0.5rem 1.5rem;
   border: none;
   border-radius: 10px;
   cursor: pointer;
 
   &:hover {
-    background-color: #d4a7f2;
+    background-color: ${colors.primary};
   }
 
   &:disabled {

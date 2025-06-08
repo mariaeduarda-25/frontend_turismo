@@ -1,61 +1,38 @@
 import styled from "styled-components";
+import { colors } from "../../styles/GlobalStyle";
 
 export const Container = styled.main`
-  flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 7rem;
-`;
+  align-items: flex-start;
+  padding: 2rem;
+  min-height: calc(100vh - 7.6rem);
+  gap: 4rem;
 
-export const Section = styled.section`
-  background: var(--secondary);
-  padding: 3rem 2rem;
-  border: 1px solid black;
-  border-radius: 15px;
-  width: 90%;
-  max-width: 600px;
-  height: auto;
-  text-align: center;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
 
-  h2 {
+  h2, h3 {
+    font-size: 1.5rem;
     margin-bottom: 1rem;
   }
 `;
 
-export const InputGroup = styled.div`
+export const AvaliacaoList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
   display: flex;
-  align-items: center;
-  border: 1px solid black;
-  border-radius: 15px;
-  padding: 0.5rem;
-  margin: 1rem 0;
-  gap: 0.5rem;
-
-  input,
-  textarea {
-    border: none;
-    outline: none;
-    flex: 1;
-    background: transparent;
-    font-size: 1rem;
-    width: 100%;
-    resize: none;
-  }
+  flex-direction: column;
+  gap: 1rem;
 `;
 
-export const Button = styled.button`
-  background: var(--primary);
-  border: none;
-  padding: 0.7rem 2rem;
-  border-radius: 20px;
+export const AvaliacaoItem = styled.li`
+  background-color: ${colors.secondary};
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   font-size: 1rem;
-  cursor: pointer;
-  margin-top: 1rem;
-  transition: 0.3s ease;
-
-  &:hover {
-    opacity: 0.8;
-  }
 `;

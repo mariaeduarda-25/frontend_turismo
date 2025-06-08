@@ -1,7 +1,8 @@
 import styled from "styled-components";
+import { colors } from "../../styles/GlobalStyle";
 
 export const SForm = styled.form`
-  background: var(--secondary);
+  background-color: ${colors.secondary};
   padding: 3rem 2rem;
   border: 1px solid black;
   border-radius: 15px;

@@ -1,8 +1,17 @@
 import { SHeader } from "./styles";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 import logo from "../../assets/logo.svg";
 
 export function Header() {
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <SHeader>
       <Link to="/">
@@ -28,9 +37,16 @@ export function Header() {
           <Link to="/avaliacoes" className="botao">
             Avaliações
           </Link>
-          <Link to="/login" className="botao">
-            <strong>Login</strong>
-          </Link>
+
+          {currentUser ? (
+            <button onClick={handleLogout} className="botao">
+              Sair
+            </button>
+          ) : (
+            <Link to="/login" className="botao">
+              <strong>Login</strong>
+            </Link>
+          )}
         </div>
       </nav>
     </SHeader>

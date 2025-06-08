@@ -1,4 +1,4 @@
-import type { UserProps } from "../types/UserType"
+import type { UserProps } from "../types/UserType";
 
 export const mockUsers: UserProps[] = [
   {
@@ -10,9 +10,16 @@ export const mockUsers: UserProps[] = [
   },
   {
     id: "user-2",
-    name: "Regular User",
-    email: "user@example.com",
+    name: "Maria",
+    email: "maria@example.com",
     password: "user123",
     role: "user",
   },
-]
+  {
+    id: "user-3",
+    name: "Rebecca",
+    email: "rebecca@example.com",
+    password: "user1234",
+    role: "user",
+  },
+];
