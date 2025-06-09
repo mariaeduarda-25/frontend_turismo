@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { colors } from "../../styles/GlobalStyle";
 
 export const Container = styled.main`
   display: flex;
@@ -18,21 +17,4 @@ export const Container = styled.main`
     font-size: 1.5rem;
     margin-bottom: 1rem;
   }
-`;
-
-export const AvaliacaoList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin-top: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
-export const AvaliacaoItem = styled.li`
-  background-color: ${colors.secondary};
-  padding: 1rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  font-size: 1rem;
 `;

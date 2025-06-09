@@ -44,7 +44,7 @@ export function Header() {
             </button>
           ) : (
             <Link to="/login" className="botao">
-              <strong>Login</strong>
+              Login
             </Link>
           )}
         </div>

@@ -28,18 +28,24 @@ export const SHeader = styled.header`
       gap: 1rem;
     }
 
-    a {
+    a,
+    button {
       text-decoration: none;
       color: ${colors.black};
       padding: 0.5rem;
+      font-family: inherit;
+      font-size: inherit;
+      border: none;
+      cursor: pointer;
+      background: none;
+    }
 
-      &.botao {
-        margin-left: auto;
-        background-color: ${colors.secondary};
-        padding: 0.5rem 1rem;
-        border-radius: 1rem;
-        font-weight: normal;
-      }
+    .botao {
+      margin-left: auto;
+      background-color: ${colors.secondary};
+      padding: 0.5rem 1rem;
+      border-radius: 1rem;
+      font-weight: normal;
     }
 
     label {
@@ -54,7 +60,8 @@ export const SHeader = styled.header`
       div {
         display: none;
 
-        a {
+        a,
+        button {
           background-color: ${colors.secondary};
           min-width: 8rem;
         }

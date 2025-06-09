@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { Header } from "../../components/Header";
 import { Footer } from "../../components/Footer";
-import { Container, AvaliacaoList, AvaliacaoItem } from "./styles";
+import { Container } from "./styles";
 import { AvaliacaoForm } from "../../components/AvaliacaoForm";
 import { mockComments } from "../../mocks/CommentMock";
 import { mockUsers } from "../../mocks/UserMock";
 import type { CommentProps } from "../../types/CommentType";
 import { useAuth } from "../../contexts/AuthContext";
+import { AvaliacaoList } from "../../components/AvaliacaoList"; // Novo import
 
 export function Avaliacoes() {
   const { currentUser } = useAuth();
@@ -35,6 +36,24 @@ export function Avaliacoes() {
     setAvaliacoes([...avaliacoes, novaAvaliacao]);
   };
 
+  const handleDelete = (id: string) => {
+    setAvaliacoes(avaliacoes.filter((a) => a.id !== id));
+  };
+
+  const handleEdit = (id: string) => {
+    const comentario = avaliacoes.find((a) => a.id === id);
+    if (!comentario) return;
+
+    const novoComentario = prompt("Edite seu comentário:", comentario.comment);
+    if (novoComentario !== null && novoComentario.trim() !== "") {
+      setAvaliacoes(
+        avaliacoes.map((a) =>
+          a.id === id ? { ...a, comment: novoComentario } : a
+        )
+      );
+    }
+  };
+
   if (!currentUser) {
     return <Navigate to="/login" replace />;
   }
@@ -48,14 +67,13 @@ export function Avaliacoes() {
           {avaliacoes.length === 0 ? (
             <p>Nenhuma avaliação cadastrada ainda.</p>
           ) : (
-            <AvaliacaoList>
-              {avaliacoes.map((avaliacao) => (
-                <AvaliacaoItem key={avaliacao.id}>
-                  <strong>{avaliacao.data}</strong> —{" "}
-                  <em>{getUserNameById(avaliacao.userId)}</em>: {avaliacao.comment}
-                </AvaliacaoItem>
-              ))}
-            </AvaliacaoList>
+            <AvaliacaoList
+              comentarios={avaliacoes}
+              getUserNameById={getUserNameById}
+              currentUserId={currentUser.id}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+            />
           )}
         </div>
 
