@@ -24,7 +24,6 @@ export function AvaliacaoForm({ postId, onSubmit }: AvaliacaoFormProps) {
       await addComment({
         postId,
         userId: currentUser.id,
-        autor: name.trim(),
         comment: comment.trim(),
       });
       setComment("");
