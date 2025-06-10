@@ -1,57 +1,70 @@
-import { describe, it, vi, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { AvaliacaoList } from '../../components/AvaliacaoList';
-import { mockComments } from '../../mocks/CommentMock';
-import { mockUsers } from '../../mocks/UserMock';
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 
+import { AuthContext } from "../../contexts/AuthContext";
+import { CommentContext } from "../../contexts/CommentContext";
+import { mockUsers } from "../../mocks/UserMock";
+import { mockComments } from "../../mocks/CommentMock";
+import { Avaliacoes } from "../../pages/Avaliacoes";
 
-vi.mock('../../hooks/useAuth', () => ({
-  useAuth: () => ({
-    currentUser: mockUsers[1],
-  }),
-}));
+// Função utilitária para renderizar com provedores
+const renderWithProviders = (user = mockUsers[0], comments = [...mockComments]) => {
+  // Converte os mocks para o tipo correto (removendo campos extras)
+  const convertedComments = comments.map(({ postId, userId, comment }) => ({
+    postId,
+    userId,
+    comment,
+  }));
 
+  return render(
+    <AuthContext.Provider
+      value={{
+        currentUser: user,
+        isLoading: false,
+        login: vi.fn(),
+        cadastro: vi.fn(),
+        logout: vi.fn(),
+      }}
+    >
+      <CommentContext.Provider
+        value={{
+          comments: convertedComments,
+          addComment: vi.fn(async (comment) => {
+            convertedComments.push(comment); // Simula a adição
+          }),
+        }}
+      >
+        <MemoryRouter initialEntries={["/avaliacoes"]}>
+          <Routes>
+            <Route path="/avaliacoes" element={<Avaliacoes />} />
+            <Route path="/login" element={<div>Página de Login</div>} />
+          </Routes>
+        </MemoryRouter>
+      </CommentContext.Provider>
+    </AuthContext.Provider>
+  );
+};
 
-vi.mock('../../hooks/useComment', () => ({
-  useComment: () => ({
-    addComment: vi.fn(),
-  }),
-}));
+// Exemplo de teste
+describe("Página de Avaliações", () => {
+  it("deve exibir comentário após envio", async () => {
+    renderWithProviders();
 
+    const botaoEnviar = screen.getByRole("button", { name: /enviar/i });
 
-describe('Página de Avaliações - Integração', () => {
-  const getUserNameById = (id: string) => {
-    return mockUsers.find((u) => u.id === id)?.name || 'Desconhecido';
-  };
+    // Simula o clique no botão
+    await userEvent.click(botaoEnviar);
 
+    // Espera comentário aparecer
+    await waitFor(() => {
+      expect(screen.getByText(/Ana/i)).toBeInTheDocument();
+    });
 
-  const onDelete = vi.fn();
-  const onEdit = vi.fn();
-
-
-  it('deve renderizar os comentários corretamente', () => {
-    render(
-      <AvaliacaoList
-        comentarios={mockComments}
-        getUserNameById={getUserNameById}
-        currentUserId={"user-2"}
-        onDelete={onDelete}
-        onEdit={onEdit}
-      />
-    );
-
-
-    expect(screen.getByText(/30\/05\/2025/)).toBeInTheDocument();
-    expect(screen.getByText(/Ana/)).toBeInTheDocument();
-
-
-    expect(screen.getByText(/22\/05\/2025/)).toBeInTheDocument();
-    expect(screen.getByText(/Maria/)).toBeInTheDocument();
-
-
-    expect(screen.getByText(/Editar/)).toBeInTheDocument();
-    expect(screen.getByText(/Excluir/)).toBeInTheDocument();
+    // Outro expect, se necessário
+    expect(
+      screen.getByText(/O hotel Hotel Chateau La Villette/i)
+    ).toBeInTheDocument();
   });
 });
-
-

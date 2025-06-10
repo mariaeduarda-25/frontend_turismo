@@ -1,16 +1,14 @@
-// src/contexts/CommentContext.tsx
 import { createContext, useState, type ReactNode} from "react";
 
-interface Comment {
+export interface Comment {
   postId: string;
   userId: string;
-  autor: string;
   comment: string;
 }
 
 interface CommentContextType {
   addComment: (comment: Comment) => Promise<void>;
-  comments: Comment[]; // opcional
+  comments: Comment[]; 
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -22,7 +20,6 @@ export const CommentProvider = ({ children }: { children: ReactNode }) => {
   const addComment = async (newComment: Comment) => {
     console.log("Comentário adicionado:", newComment);
 
-    // Aqui você pode integrar com Firebase, API etc.
     setComments((prev) => [...prev, newComment]);
   };
 

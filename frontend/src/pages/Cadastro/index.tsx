@@ -21,7 +21,7 @@ export const CadastrePage = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { register } = useAuth();
+  const { cadastro} = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent) => {
@@ -38,7 +38,7 @@ export const CadastrePage = () => {
     setError("");
 
     try {
-      await register(name, email, password);
+      await cadastro(name, email, password);
       navigate("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao registrar");

@@ -25,7 +25,7 @@ vi.mock("../../hooks/useAuth", () => ({
     	isLoggedIn = true;
     	return;
   	} else {
-    	throw new Error("Credenciais inválidas");
+    	throw new Error("Email ou senha invalidos");
   	}
 	}),
 	logout: vi.fn(() => {

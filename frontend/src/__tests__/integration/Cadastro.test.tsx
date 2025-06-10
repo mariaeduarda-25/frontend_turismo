@@ -1,57 +1,66 @@
-import { describe, it, vi, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { AvaliacaoList } from '../../components/AvaliacaoList';
-import { mockComments } from '../../mocks/CommentMock';
-import { mockUsers } from '../../mocks/UserMock';
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
+import { AuthProvider } from "../../contexts/AuthContext";
+import { CadastrePage } from "../../pages/Cadastro";
 
-
-vi.mock('../../hooks/useAuth', () => ({
-  useAuth: () => ({
-    currentUser: mockUsers[1],
-  }),
-}));
-
-
-vi.mock('../../hooks/useComment', () => ({
-  useComment: () => ({
-    addComment: vi.fn(),
-  }),
-}));
-
-
-describe('Página de Avaliações - Integração', () => {
-  const getUserNameById = (id: string) => {
-    return mockUsers.find((u) => u.id === id)?.name || 'Desconhecido';
-  };
-
-
-  const onDelete = vi.fn();
-  const onEdit = vi.fn();
-
-
-  it('deve renderizar os comentários corretamente', () => {
+describe("Página de Cadastro", () => {
+  it("realiza cadastro com sucesso", async () => {
     render(
-      <AvaliacaoList
-        comentarios={mockComments}
-        getUserNameById={getUserNameById}
-        currentUserId={"user-2"}
-        onDelete={onDelete}
-        onEdit={onEdit}
-      />
+      <AuthProvider>
+        <MemoryRouter>
+          <CadastrePage/>
+        </MemoryRouter>
+      </AuthProvider>
     );
 
+    fireEvent.change(screen.getByPlaceholderText("Nome Completo"), {
+      target: { value: "João Teste" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Email"), {
+      target: { value: "joao@teste.com" },
+    });
+    fireEvent.change(screen.getAllByPlaceholderText("Senha")[0], {
+      target: { value: "senha123" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Confirmar Senha"), {
+      target: { value: "senha123" },
+    });
 
-    expect(screen.getByText(/30\/05\/2025/)).toBeInTheDocument();
-    expect(screen.getByText(/Ana/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /cadastrar/i }));
 
+    await waitFor(() => {
+      expect(screen.queryByText(/As senhas não coincidem/i)).not.toBeInTheDocument();
+    });
 
-    expect(screen.getByText(/22\/05\/2025/)).toBeInTheDocument();
-    expect(screen.getByText(/Maria/)).toBeInTheDocument();
+    // Se quiser verificar redirecionamento ou sucesso, você pode mockar o `navigate` e conferir se ele foi chamado
+  });
 
+  it("exibe erro quando senhas são diferentes", async () => {
+    render(
+      <AuthProvider>
+        <MemoryRouter>
+          <CadastrePage />
+        </MemoryRouter>
+      </AuthProvider>
+    );
 
-    expect(screen.getByText(/Editar/)).toBeInTheDocument();
-    expect(screen.getByText(/Excluir/)).toBeInTheDocument();
+    fireEvent.change(screen.getByPlaceholderText("Nome Completo"), {
+      target: { value: "Maria" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Email"), {
+      target: { value: "maria@teste.com" },
+    });
+    fireEvent.change(screen.getAllByPlaceholderText("Senha")[0], {
+      target: { value: "123456" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Confirmar Senha"), {
+      target: { value: "654321" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /cadastrar/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/As senhas não coincidem/i)).toBeInTheDocument();
+    });
   });
 });
-
-
