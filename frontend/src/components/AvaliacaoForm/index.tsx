@@ -4,11 +4,11 @@ import { useComment } from "../../hooks/useComment";
 import { useAuth } from "../../hooks/useAuth";
 
 interface AvaliacaoFormProps {
-  postId: string;
+  post_id: string;
   onSubmit: (post: { comment: string }) => void;
 }
 
-export function AvaliacaoForm({ postId, onSubmit }: AvaliacaoFormProps) {
+export function AvaliacaoForm({ post_id, onSubmit }: AvaliacaoFormProps) {
   const [comment, setComment] = useState("");
   const [name, setName] = useState("");
   const { addComment } = useComment();
@@ -22,8 +22,8 @@ export function AvaliacaoForm({ postId, onSubmit }: AvaliacaoFormProps) {
     setIsLoading(true);
     try {
       await addComment({
-        postId,
-        userId: currentUser.id,
+        post_id,
+        user_id: currentUser.id,
         comment: comment.trim(),
       });
       setComment("");

@@ -12,10 +12,10 @@ import { AvaliacaoList } from "../../components/AvaliacaoList"; // Novo import
 
 export function Avaliacoes() {
   const { currentUser } = useAuth();
-  const postId = "post-1";
+  const post_id = "post-1";
 
   const [avaliacoes, setAvaliacoes] = useState<CommentProps[]>(
-    mockComments.filter((comment) => comment.postId === postId)
+    mockComments.filter((comment) => comment.post_id === post_id)
   );
 
   const getUserNameById = (userId: string) => {
@@ -28,10 +28,10 @@ export function Avaliacoes() {
 
     const novaAvaliacao: CommentProps = {
       id: `comment-${Date.now()}`,
-      postId,
-      userId: currentUser.id,
+      post_id,
+      user_id: currentUser.id,
       comment: data.comment,
-      data: new Date().toLocaleDateString("pt-BR"),
+      date: new Date().toLocaleDateString("pt-BR"),
     };
     setAvaliacoes([...avaliacoes, novaAvaliacao]);
   };
@@ -78,7 +78,7 @@ export function Avaliacoes() {
         </div>
 
         <div style={{ flex: 1 }}>
-          <AvaliacaoForm postId={postId} onSubmit={handleSubmit} />
+          <AvaliacaoForm post_id={post_id} onSubmit={handleSubmit} />
         </div>
       </Container>
       <Footer />

@@ -1,89 +1,105 @@
-import { createContext, useState, useEffect, type ReactNode, useContext } from "react";
-import type { UserProps } from "../types/UserType";
-import { mockUsers } from "../mocks/UserMock";
+"use client"
+
+import { createContext, useState, useEffect, type ReactNode, useContext } from "react"
+import type { UserProps } from "../types/UserType"
+//import { mockUsers } from "../mocks/UserMock"
+import { apiUser } from "../services"
 
 export interface AuthContextType {
-  currentUser: UserProps | null;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  cadastro: (name: string, email: string, password: string) => Promise<void>;
-  logout: () => void;
+  currentUser: UserProps | null
+  isLoading: boolean
+  login: (email: string, password: string) => Promise<void>
+  register: (name: string, email: string, password: string) => Promise<void>
+  logout: () => void
 }
 
 export const AuthContext = createContext<AuthContextType>({
   currentUser: null,
   isLoading: true,
-  login: async () => {},
-  cadastro: async () => {},
-  logout: () => {},
-});
+  login: async () => { },
+  register: async () => { },
+  logout: () => { },
+})
 
 interface AuthProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [currentUser, setCurrentUser] = useState<UserProps | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<UserProps | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("currentUser");
+    // Check if user is stored in localStorage
+    const storedUser = localStorage.getItem("currentUser")
     if (storedUser) {
-      setCurrentUser(JSON.parse(storedUser));
+      setCurrentUser(JSON.parse(storedUser))
     }
-    setIsLoading(false);
-  }, []);
+    setIsLoading(false)
+  }, [])
 
   const login = async (email: string, password: string) => {
+    // Simula chamada de API
     return new Promise<void>((resolve, reject) => {
-      setTimeout(() => {
-        const user = mockUsers.find((u) => u.email === email && u.password === password);
-
-        if (user) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { password: _, ...userWithoutPassword } = user;
-          setCurrentUser(userWithoutPassword);
-          localStorage.setItem("currentUser", JSON.stringify(userWithoutPassword));
-          resolve();
-        } else {
-          reject(new Error("Email ou senha invalido"));
+      setTimeout(async () => {
+        //const user = mockUsers.find((u) => u.email === email && u.password === password)
+        try {
+          const response = await apiUser.login({ email, password })
+          setCurrentUser(response.data.user)
+          localStorage.setItem("currentUser", JSON.stringify(response.data.user))
+          localStorage.setItem("token", response.data.access_token)
+          resolve()
+        } catch (e) {
+          reject(new Error(String(e)))
         }
-      }, 500);
-    });
-  };
+      }, 500)
+    })
+  }
 
-  const cadastro = async (name: string, email: string, password: string) => {
+  const register = async (name: string, email: string, password: string) => {
+    // Simula chamada de API
     return new Promise<void>((resolve, reject) => {
-      setTimeout(() => {
-        const existingUser = mockUsers.find((u) => u.email === email);
-
-        if (existingUser) {
-          reject(new Error("email em uso"));
-        } else {
-          const newUser: UserProps = {
-            id: `user-${Date.now()}`,
-            name,
-            email,
-            password,
-            role: "user",
-          };
-
-          mockUsers.push(newUser);
-
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { password: _, ...userWithoutPassword } = newUser;
-          setCurrentUser(userWithoutPassword);
-          localStorage.setItem("currentUser", JSON.stringify(userWithoutPassword));
-          resolve();
+      setTimeout(async () => {
+        try {
+          //const existingUser = mockUsers.find((u) => u.email === email)
+          await apiUser.register({ name, email, password })
+          /*
+          const setUser = { id: user.id, name: user.name, email: user.email, role: user.role }
+          setCurrentUser(setUser)
+          
+          if (existingUser) {
+            reject(new Error("Email already in use"))
+          } else {
+            const newUser: UserProps = {
+              id: `user-${Date.now()}`,
+              name,
+              email,
+              password,
+              role: "user",
+            }
+  
+            // Em um aplicativo real, você enviaria isso para uma API
+            //mockUsers.push(newUser)
+  
+            // Remove password antes de armazenar
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { password: _, ...userWithoutPassword } = newUser
+            setCurrentUser(userWithoutPassword)
+          localStorage.setItem("currentUser", JSON.stringify(userWithoutPassword))
+            */
+          resolve()
+        } catch (e) {
+          reject(new Error(`E-mail ou senha inválidos: ${e}`))
         }
-      }, 500);
-    });
-  };
+      }, 500)
+    })
+  }
 
   const logout = () => {
-    setCurrentUser(null);
-    localStorage.removeItem("currentUser");
-  };
+    setCurrentUser(null)
+    localStorage.removeItem("currentUser")
+    localStorage.removeItem("token")
+  }
 
   return (
     <AuthContext.Provider
@@ -91,14 +107,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         currentUser,
         isLoading,
         login,
-        cadastro,
+        register,
         logout,
       }}
     >
       {children}
     </AuthContext.Provider>
-  );
-};
+  )
+}
 
 export function useAuth() {
   const context = useContext(AuthContext);
