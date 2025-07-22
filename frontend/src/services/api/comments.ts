@@ -6,9 +6,6 @@ export interface IComment {
     date?: string
 }
 class CommentData {
-     getAll() {
-        return api.get('/comments/')
-    }
     getByUser() {
         return api.get(`/comments/user/`)
     }
