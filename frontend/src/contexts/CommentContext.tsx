@@ -1,11 +1,14 @@
 "use client"
 
+
 import { createContext, useState, useEffect, type ReactNode } from "react"
 import type { CommentProps } from "../types/CommentType"
 // import { mockComments } from "../mocks/CommentMock"
 //import type { UserProps } from "../types/UserType"
 // import { mockUsers } from "../mocks/UserMock"
 import { apiComment } from "../services"
+import {format} from "date-fns"
+
 
 interface CommentContextType {
   comments: CommentProps[]
@@ -16,6 +19,7 @@ interface CommentContextType {
   deleteComment: (id: string) => Promise<void>
 }
 
+
 export const CommentContext = createContext<CommentContextType>({
   comments: [],
   isLoading: true,
@@ -25,14 +29,17 @@ export const CommentContext = createContext<CommentContextType>({
   deleteComment: async () => { },
 })
 
+
 interface CommentProviderProps {
   children: ReactNode
 }
+
 
 export const CommentProvider = ({ children }: CommentProviderProps) => {
   const [comments, setComments] = useState<CommentProps[]>([])
   //const [users, setUsers] = useState<UserProps[]>([])
   const [isLoading, setIsLoading] = useState(true)
+
 
   useEffect(() => {
     // Simula chamada de API
@@ -42,6 +49,7 @@ export const CommentProvider = ({ children }: CommentProviderProps) => {
       //setUsers(mockUsers)
     }, 500)
   }, [])
+
 
   const getCommentsByPost = async (post_id: string) => {
     /*
@@ -60,6 +68,7 @@ export const CommentProvider = ({ children }: CommentProviderProps) => {
     }
   }
 
+
   const getCommentsByUser = async () => {
     // return comments.filter((comment) => comment.user_id === user_id)
     try {
@@ -73,6 +82,7 @@ export const CommentProvider = ({ children }: CommentProviderProps) => {
     }
   }
 
+
   const addComment = async (commentData: Omit<CommentProps, "id" | "date">) => {
     // Simula chamada de API
     /*
@@ -84,13 +94,15 @@ export const CommentProvider = ({ children }: CommentProviderProps) => {
           date: `${new Date().toLocaleDateString()}`,
         }
 
+
         setComments((prevComments) => [...prevComments, newComment])
         resolve(newComment)
       }, 500)
     })*/
-    const response = await apiComment.create(commentData)
+    const response = await apiComment.create({...commentData,date:`${format(new Date(),'yyyy-MM-dd')}`})
     return response.data
   }
+
 
   const deleteComment = async (id: string) => {
     // Simula chamada de API
@@ -98,10 +110,12 @@ export const CommentProvider = ({ children }: CommentProviderProps) => {
       setTimeout(() => {
         const commentIndex = comments.findIndex((comment) => comment.id === id)
 
+
         if (commentIndex === -1) {
           reject(new Error("Comment not found"))
           return
         }
+
 
         const updatedComments = comments.filter((comment) => comment.id !== id)
         setComments(updatedComments)
@@ -109,6 +123,7 @@ export const CommentProvider = ({ children }: CommentProviderProps) => {
       }, 500)
     })
   }
+
 
   return (
     <CommentContext.Provider
