@@ -1,56 +1,87 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { Header } from "../../components/Header";
 import { Footer } from "../../components/Footer";
 import { Container } from "./styles";
 import { AvaliacaoForm } from "../../components/AvaliacaoForm";
-import { mockComments } from "../../mocks/CommentMock";
-import { mockUsers } from "../../mocks/UserMock";
-import type { CommentProps } from "../../types/CommentType";
+import { AvaliacaoList } from "../../components/AvaliacaoList";
 import { useAuth } from "../../contexts/AuthContext";
-import { AvaliacaoList } from "../../components/AvaliacaoList"; // Novo import
+import type { CommentProps } from "../../types/CommentType";
+import type { UserProps } from "../../types/UserType";
+import {api} from "../../services/http/axios"; // seu axios já configurado com baseURL do .env
 
 export function Avaliacoes() {
   const { currentUser } = useAuth();
   const post_id = "post-1";
 
-  const [avaliacoes, setAvaliacoes] = useState<CommentProps[]>(
-    mockComments.filter((comment) => comment.post_id === post_id)
-  );
+  const [avaliacoes, setAvaliacoes] = useState<CommentProps[]>([]);
+  const [usuarios, setUsuarios] = useState<UserProps[]>([]);
 
-  const getUserNameById = (userId: string) => {
-    const user = mockUsers.find((u) => u.id === userId);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [commentsRes, usersRes] = await Promise.all([
+          api.get(`/comments`, { params: { post_id } }),
+          api.get(`/users`),
+        ]);
+        setAvaliacoes(commentsRes.data);
+        setUsuarios(usersRes.data);
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  const getUserNameById = (user_id: string) => {
+    const user = usuarios.find((u) => u.id === user_id);
     return user ? user.name : "Usuário Desconhecido";
   };
 
-  const handleSubmit = (data: { comment: string }) => {
+  const handleSubmit = async (data: { comment: string }) => {
     if (!currentUser) return;
 
-    const novaAvaliacao: CommentProps = {
-      id: `comment-${Date.now()}`,
+    const novaAvaliacao = {
       post_id,
       user_id: currentUser.id,
       comment: data.comment,
-      date: new Date().toLocaleDateString("pt-BR"),
+      date: new Date().toISOString(),
     };
-    setAvaliacoes([...avaliacoes, novaAvaliacao]);
+
+    try {
+      const response = await api.post("/comments", novaAvaliacao);
+      setAvaliacoes((prev) => [...prev, response.data]);
+    } catch (error) {
+      console.error("Erro ao salvar comentário:", error);
+    }
   };
 
-  const handleDelete = (id: string) => {
-    setAvaliacoes(avaliacoes.filter((a) => a.id !== id));
+  const handleDelete = async (id: string) => {
+    try {
+      await api.delete(`/comments/${id}`);
+      setAvaliacoes((prev) => prev.filter((a) => a.id !== id));
+    } catch (error) {
+      console.error("Erro ao excluir comentário:", error);
+    }
   };
 
-  const handleEdit = (id: string) => {
+  const handleEdit = async (id: string) => {
     const comentario = avaliacoes.find((a) => a.id === id);
     if (!comentario) return;
 
     const novoComentario = prompt("Edite seu comentário:", comentario.comment);
-    if (novoComentario !== null && novoComentario.trim() !== "") {
-      setAvaliacoes(
-        avaliacoes.map((a) =>
-          a.id === id ? { ...a, comment: novoComentario } : a
-        )
-      );
+    if (novoComentario && novoComentario.trim() !== "") {
+      try {
+        const response = await api.put(`/comments/${id}`, {
+          comment: novoComentario,
+        });
+        setAvaliacoes((prev) =>
+          prev.map((a) => (a.id === id ? response.data : a))
+        );
+      } catch (error) {
+        console.error("Erro ao editar comentário:", error);
+      }
     }
   };
 
@@ -85,6 +116,3 @@ export function Avaliacoes() {
     </>
   );
 }
-
-
-
