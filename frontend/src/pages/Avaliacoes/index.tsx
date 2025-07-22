@@ -4,21 +4,23 @@ import { Header } from "../../components/Header";
 import { Footer } from "../../components/Footer";
 import { Container } from "./styles";
 import { AvaliacaoForm } from "../../components/AvaliacaoForm";
+import { mockComments } from "../../mocks/CommentMock";
+import { mockUsers } from "../../mocks/UserMock";
 import type { CommentProps } from "../../types/CommentType";
 import { useAuth } from "../../contexts/AuthContext";
-import { AvaliacaoList } from "../../components/AvaliacaoList";
+import { AvaliacaoList } from "../../components/AvaliacaoList"; // Novo import
 
 export function Avaliacoes() {
   const { currentUser } = useAuth();
   const post_id = "post-1";
 
-  const [avaliacoes, setAvaliacoes] = useState<CommentProps[]>([]);
+  const [avaliacoes, setAvaliacoes] = useState<CommentProps[]>(
+    mockComments.filter((comment) => comment.post_id === post_id)
+  );
 
   const getUserNameById = (userId: string) => {
-    if (currentUser && currentUser.id === userId) {
-      return currentUser.name;
-    }
-    return "Usuário Desconhecido";
+    const user = mockUsers.find((u) => u.id === userId);
+    return user ? user.name : "Usuário Desconhecido";
   };
 
   const handleSubmit = (data: { comment: string }) => {
@@ -83,3 +85,6 @@ export function Avaliacoes() {
     </>
   );
 }
+
+
+
