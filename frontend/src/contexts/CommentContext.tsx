@@ -6,7 +6,6 @@ import type { CommentProps } from "../types/CommentType"
 //import type { UserProps } from "../types/UserType"
 // import { mockUsers } from "../mocks/UserMock"
 import { apiComment } from "../services"
-import {format} from "date-fns"
 
 interface CommentContextType {
   comments: CommentProps[]
@@ -89,7 +88,7 @@ export const CommentProvider = ({ children }: CommentProviderProps) => {
         resolve(newComment)
       }, 500)
     })*/
-    const response = await apiComment.create({...commentData,date:`${format(new Date(),'yyyy-MM-dd')}`})
+    const response = await apiComment.create(commentData)
     return response.data
   }
 

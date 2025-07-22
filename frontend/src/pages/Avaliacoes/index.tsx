@@ -1,92 +1,50 @@
-import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
-import { Header } from "../../components/Header";
-import { Footer } from "../../components/Footer";
-import { Container } from "./styles";
-import { AvaliacaoForm } from "../../components/AvaliacaoForm";
-import { AvaliacaoList } from "../../components/AvaliacaoList";
-import { useAuth } from "../../contexts/AuthContext";
-import type { CommentProps } from "../../types/CommentType";
-import type { UserProps } from "../../types/UserType";
-import {api} from "../../services/http/axios"; // seu axios já configurado com baseURL do .env
+import { useEffect, useState, useContext } from "react"
+import { Navigate } from "react-router-dom"
+import { Header } from "../../components/Header"
+import { Footer } from "../../components/Footer"
+import { Container } from "./styles"
+import { AvaliacaoForm } from "../../components/AvaliacaoForm"
+import { AvaliacaoList } from "../../components/AvaliacaoList"
+import { useAuth } from "../../contexts/AuthContext"
+import { CommentContext } from "../../contexts/CommentContext"
+import type { UserProps } from "../../types/UserType"
+import { api } from "../../services/http/axios"
 
 export function Avaliacoes() {
-  const { currentUser } = useAuth();
-  const post_id = "post-1";
+  const { currentUser } = useAuth()
+  const { deleteComment } = useContext(CommentContext)
+  const post_id = "post-1"
 
-  const [avaliacoes, setAvaliacoes] = useState<CommentProps[]>([]);
-  const [usuarios, setUsuarios] = useState<UserProps[]>([]);
+  const [usuarios, setUsuarios] = useState<UserProps[]>([])
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchUsers() {
       try {
-        const [commentsRes, usersRes] = await Promise.all([
-          api.get(`/comments`, { params: { post_id } }),
-          api.get(`/users`),
-        ]);
-        setAvaliacoes(commentsRes.data);
-        setUsuarios(usersRes.data);
+        const res = await api.get("/users")
+        setUsuarios(res.data)
       } catch (error) {
-        console.error("Erro ao buscar dados:", error);
+        console.error("Erro ao buscar usuários:", error)
       }
     }
 
-    fetchData();
-  }, []);
+    fetchUsers()
+  }, [])
 
   const getUserNameById = (user_id: string) => {
-    const user = usuarios.find((u) => u.id === user_id);
-    return user ? user.name : "Usuário Desconhecido";
-  };
-
-  const handleSubmit = async (data: { comment: string }) => {
-    if (!currentUser) return;
-
-    const novaAvaliacao = {
-      post_id,
-      user_id: currentUser.id,
-      comment: data.comment,
-      date: new Date().toISOString(),
-    };
-
-    try {
-      const response = await api.post("/comments", novaAvaliacao);
-      setAvaliacoes((prev) => [...prev, response.data]);
-    } catch (error) {
-      console.error("Erro ao salvar comentário:", error);
-    }
-  };
+    const user = usuarios.find((u) => u.id === user_id)
+    return user ? user.name : "Usuário Desconhecido"
+  }
 
   const handleDelete = async (id: string) => {
     try {
-      await api.delete(`/comments/${id}`);
-      setAvaliacoes((prev) => prev.filter((a) => a.id !== id));
+      await deleteComment(id)
     } catch (error) {
-      console.error("Erro ao excluir comentário:", error);
+      console.error("Erro ao excluir comentário:", error)
     }
-  };
-
-  const handleEdit = async (id: string) => {
-    const comentario = avaliacoes.find((a) => a.id === id);
-    if (!comentario) return;
-
-    const novoComentario = prompt("Edite seu comentário:", comentario.comment);
-    if (novoComentario && novoComentario.trim() !== "") {
-      try {
-        const response = await api.put(`/comments/${id}`, {
-          comment: novoComentario,
-        });
-        setAvaliacoes((prev) =>
-          prev.map((a) => (a.id === id ? response.data : a))
-        );
-      } catch (error) {
-        console.error("Erro ao editar comentário:", error);
-      }
-    }
-  };
+  }
 
   if (!currentUser) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace />
   }
 
   return (
@@ -95,24 +53,19 @@ export function Avaliacoes() {
       <Container>
         <div style={{ flex: 1 }}>
           <h2>Avaliações</h2>
-          {avaliacoes.length === 0 ? (
-            <p>Nenhuma avaliação cadastrada ainda.</p>
-          ) : (
-            <AvaliacaoList
-              comentarios={avaliacoes}
-              getUserNameById={getUserNameById}
-              currentUserId={currentUser.id}
-              onDelete={handleDelete}
-              onEdit={handleEdit}
-            />
-          )}
+          <AvaliacaoList
+            post_id={post_id}
+            currentUserId={currentUser.id}
+            getUserNameById={getUserNameById}
+            onDelete={handleDelete}
+          />
         </div>
 
         <div style={{ flex: 1 }}>
-          <AvaliacaoForm post_id={post_id} onSubmit={handleSubmit} />
+          <AvaliacaoForm post_id={post_id} />
         </div>
       </Container>
       <Footer />
     </>
-  );
+  )
 }

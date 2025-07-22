@@ -5,10 +5,9 @@ import { useAuth } from "../../hooks/useAuth";
 
 interface AvaliacaoFormProps {
   post_id: string;
-  onSubmit: (post: { comment: string }) => void;
 }
 
-export function AvaliacaoForm({ post_id, onSubmit }: AvaliacaoFormProps) {
+export function AvaliacaoForm({ post_id }: AvaliacaoFormProps) {
   const [comment, setComment] = useState("");
   const [name, setName] = useState("");
   const { addComment } = useComment();
@@ -28,7 +27,7 @@ export function AvaliacaoForm({ post_id, onSubmit }: AvaliacaoFormProps) {
       });
       setComment("");
       setName("");
-      onSubmit({ comment });
+      // A chamada de onSubmit foi removida pois agora o contexto gerencia o estado global
     } catch (error) {
       console.error("Falha ao adicionar o comentário:", error);
     } finally {
