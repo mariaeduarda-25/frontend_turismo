@@ -10,15 +10,12 @@ import type { CommentProps } from "../../types/CommentType";
 import type { UserProps } from "../../types/UserType";
 import { api } from "../../services/http/axios"; // seu axios já configurado com baseURL do .env
 
-
 export function Avaliacoes() {
   const { currentUser } = useAuth();
   const post_id = "post-1";
 
-
   const [avaliacoes, setAvaliacoes] = useState<CommentProps[]>([]);
   const [usuarios, setUsuarios] = useState<UserProps[]>([]);
-
 
   useEffect(() => {
     async function fetchData() {
@@ -34,20 +31,16 @@ export function Avaliacoes() {
       }
     }
 
-
     fetchData();
   }, []);
-
 
   const getUserNameById = (user_id: string) => {
     const user = usuarios.find((u) => u.id === user_id);
     return user ? user.name : "Usuário Desconhecido";
   };
 
-
   const handleSubmit = async (data: { comment: string }) => {
     if (!currentUser) return;
-
 
     const novaAvaliacao = {
       post_id,
@@ -56,7 +49,6 @@ export function Avaliacoes() {
       date: new Date().toISOString(),
     };
 
-
     try {
       const response = await api.post("/comments", novaAvaliacao);
       setAvaliacoes((prev) => [...prev, response.data]);
@@ -64,7 +56,6 @@ export function Avaliacoes() {
       console.error("Erro ao salvar comentário:", error);
     }
   };
-
 
   const handleDelete = async (id: string) => {
     try {
@@ -75,11 +66,9 @@ export function Avaliacoes() {
     }
   };
 
-
   const handleEdit = async (id: string) => {
     const comentario = avaliacoes.find((a) => a.id === id);
     if (!comentario) return;
-
 
     const novoComentario = prompt("Edite seu comentário:", comentario.comment);
     if (novoComentario && novoComentario.trim() !== "") {
@@ -96,11 +85,9 @@ export function Avaliacoes() {
     }
   };
 
-
   if (!currentUser) {
     return <Navigate to="/login" replace />;
   }
-
 
   return (
     <>
@@ -121,7 +108,6 @@ export function Avaliacoes() {
           )}
         </div>
 
-
         <div style={{ flex: 1 }}>
           <AvaliacaoForm post_id={post_id} onSubmit={handleSubmit} />
         </div>
@@ -130,5 +116,3 @@ export function Avaliacoes() {
     </>
   );
 }
-
-
