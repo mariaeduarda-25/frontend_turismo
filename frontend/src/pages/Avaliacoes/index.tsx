@@ -1,57 +1,73 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { Header } from "../../components/Header";
 import { Footer } from "../../components/Footer";
 import { Container } from "./styles";
 import { AvaliacaoForm } from "../../components/AvaliacaoForm";
-import { mockComments } from "../../mocks/CommentMock";
-import { mockUsers } from "../../mocks/UserMock";
-import type { CommentProps } from "../../types/CommentType";
 import { useAuth } from "../../contexts/AuthContext";
-import { AvaliacaoList } from "../../components/AvaliacaoList"; // Novo import
+import { AvaliacaoList } from "../../components/AvaliacaoList";
+
+import commentService from "../../services/api/comments";
+import type { IComment } from "../../services/api/comments";
+
+import type { CommentProps } from "../../types/CommentType";
 
 export function Avaliacoes() {
   const { currentUser } = useAuth();
   const post_id = "post-1";
 
-  const [avaliacoes, setAvaliacoes] = useState<CommentProps[]>(
-    mockComments.filter((comment) => comment.post_id === post_id)
-  );
+  const [avaliacoes, setAvaliacoes] = useState<CommentProps[]>([]);
+
+  useEffect(() => {
+    async function fetchAvaliacoes() {
+      try {
+        const res = await commentService.getByPost(post_id);
+        setAvaliacoes(res.data);
+      } catch (err) {
+        console.error("Erro ao buscar avaliações", err);
+      }
+    }
+    fetchAvaliacoes();
+  }, [post_id]);
 
   const getUserNameById = (userId: string) => {
-    const user = mockUsers.find((u) => u.id === userId);
-    return user ? user.name : "Usuário Desconhecido";
+    // ajuste para buscar do backend se necessário
+    if (currentUser && currentUser.id === userId) {
+      return currentUser.name;
+    }
+    return "Usuário Desconhecido";
   };
 
-  const handleSubmit = (data: { comment: string }) => {
+  const handleSubmit = async (data: { comment: string }) => {
     if (!currentUser) return;
 
-    const novaAvaliacao: CommentProps = {
-      id: `comment-${Date.now()}`,
+    const novaAvaliacao: IComment = {
       post_id,
-      user_id: currentUser.id,
       comment: data.comment,
-      date: new Date().toLocaleDateString("pt-BR"),
+      date: new Date().toISOString(), // ou backend gera a data
     };
-    setAvaliacoes([...avaliacoes, novaAvaliacao]);
+
+    try {
+      await commentService.create(novaAvaliacao);
+      const res = await commentService.getByPost(post_id);
+      setAvaliacoes(res.data);
+    } catch (err) {
+      console.error("Erro ao criar avaliação", err);
+    }
   };
 
-  const handleDelete = (id: string) => {
-    setAvaliacoes(avaliacoes.filter((a) => a.id !== id));
+  const handleDelete = async (id: string) => {
+    try {
+      await commentService.delete(id);
+      setAvaliacoes(avaliacoes.filter((a) => a.id !== id));
+    } catch (err) {
+      console.error("Erro ao excluir avaliação", err);
+    }
   };
 
-  const handleEdit = (id: string) => {
+  const handleEdit = async (id: string) => {
     const comentario = avaliacoes.find((a) => a.id === id);
     if (!comentario) return;
-
-    const novoComentario = prompt("Edite seu comentário:", comentario.comment);
-    if (novoComentario !== null && novoComentario.trim() !== "") {
-      setAvaliacoes(
-        avaliacoes.map((a) =>
-          a.id === id ? { ...a, comment: novoComentario } : a
-        )
-      );
-    }
   };
 
   if (!currentUser) {
