@@ -8,7 +8,7 @@ import { AvaliacaoList } from "../../components/AvaliacaoList";
 import { useAuth } from "../../contexts/AuthContext";
 import type { CommentProps } from "../../types/CommentType";
 import type { UserProps } from "../../types/UserType";
-import {api} from "../../services/http/axios"; // seu axios já configurado com baseURL do .env
+import { api } from "../../services/http/axios"; // seu axios já configurado com baseURL do .env
 
 export function Avaliacoes() {
   const { currentUser } = useAuth();
@@ -21,7 +21,7 @@ export function Avaliacoes() {
     async function fetchData() {
       try {
         const [commentsRes, usersRes] = await Promise.all([
-          api.get(`/comments`, { params: { post_id } }),
+          api.get(`/comments/post/${post_id}`), // rota corrigida aqui
           api.get(`/users`),
         ]);
         setAvaliacoes(commentsRes.data);
