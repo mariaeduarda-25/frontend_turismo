@@ -49,16 +49,16 @@ describe("AvaliacaoList", () => {
     const comentariosDeOutrosUsuarios = [
       {
         id: "comment-2",
-        postId: "post-1",
-        userId: "user-2",
+        post_id: "post-1",
+        user_id: "user-2",
         comment:
           "O passeio de teleférico em Campos de Jordão é sensacional, vale muito a pena!",
         data: "22/05/2025",
       },
       {
         id: "comment-3",
-        postId: "post-1",
-        userId: "user-3",
+        post_id: "post-1",
+        user_id: "user-3",
         comment: "Excelente gastronomia na cidade.",
         data: "21/05/2025",
       },

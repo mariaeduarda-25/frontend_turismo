@@ -12,9 +12,9 @@ import { Avaliacoes } from "../../pages/Avaliacoes";
 // Função utilitária para renderizar com provedores
 const renderWithProviders = (user = mockUsers[0], comments = [...mockComments]) => {
   // Converte os mocks para o tipo correto (removendo campos extras)
-  const convertedComments = comments.map(({ postId, userId, comment }) => ({
-    postId,
-    userId,
+  const convertedComments = comments.map(({ post_id, user_id, comment }) => ({
+    post_id,
+    user_id,
     comment,
   }));
 
@@ -24,7 +24,7 @@ const renderWithProviders = (user = mockUsers[0], comments = [...mockComments]) 
         currentUser: user,
         isLoading: false,
         login: vi.fn(),
-        cadastro: vi.fn(),
+        register: vi.fn(),
         logout: vi.fn(),
       }}
     >

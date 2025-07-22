@@ -23,7 +23,7 @@ describe("AvaliacaoForm", () => {
     const onSubmitMock = vi.fn();
     const user = userEvent.setup();
 
-    render(<AvaliacaoForm postId="post-1" onSubmit={onSubmitMock} />);
+    render(<AvaliacaoForm post_id="post-1" onSubmit={onSubmitMock} />);
 
 
     const nameInput = screen.getByPlaceholderText(/nome completo:/i);
@@ -49,7 +49,7 @@ describe("AvaliacaoForm", () => {
     const onSubmitMock = vi.fn();
     const user = userEvent.setup();
 
-    render(<AvaliacaoForm postId="post-1" onSubmit={onSubmitMock} />);
+    render(<AvaliacaoForm post_id="post-1" onSubmit={onSubmitMock} />);
 
     const submitButton = screen.getByRole("button", { name: /enviar/i });
 
