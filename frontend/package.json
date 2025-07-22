@@ -42,6 +42,6 @@
     "vitest": "^3.2.3"
   },
   "optionalDependencies": {
-   " @rollup/rollup-linux-x64-mus1": "^4.43.0"
+   "@rollup/rollup-linux-x64-mus1": "^4.43.0"
   }
 }
