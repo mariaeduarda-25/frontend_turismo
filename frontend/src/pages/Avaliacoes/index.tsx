@@ -10,72 +10,64 @@ import type { CommentProps } from "../../types/CommentType";
 import type { UserProps } from "../../types/UserType";
 import { api } from "../../services/http/axios";
 
-
-
-
 export function Avaliacoes() {
   const { currentUser } = useAuth();
   const post_id = "post-1";
 
-
   const [avaliacoes, setAvaliacoes] = useState<CommentProps[]>([]);
   const [usuarios, setUsuarios] = useState<UserProps[]>([]);
 
+  async function fetchData() {
+    try {
+      const [commentsRes, usersRes] = await Promise.all([
+        api.get(`/comments/post/${post_id}`), 
+        api.get(`/users`),
+      ]);
+      console.log("Comentários do banco:", commentsRes.data);
+      setAvaliacoes(commentsRes.data);
+      setUsuarios(usersRes.data);
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }
+  }
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const [commentsRes, usersRes] = await Promise.all([
-          api.get(`/comments`, { params: { post_id } }),
-          api.get(`/users`),
-        ]);
-        setAvaliacoes(commentsRes.data);
-        setUsuarios(usersRes.data);
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error);
-      }
-    }
-
-
     fetchData();
-  }, []);
-
+  }, [post_id]); 
 
   const getUserNameById = (user_id: string) => {
     const user = usuarios.find((u) => u.id === user_id);
     if (user) return user.name;
 
-
     if (currentUser && currentUser.id === user_id) {
       return currentUser.name;
     }
 
-
     return "Usuário Desconhecido";
   };
 
-
   const handleAdd = (newComment: CommentProps) => {
     setAvaliacoes((prev) => [...prev, newComment]);
+  
   };
 
-
   const handleDelete = async (id: string) => {
-  try {
-    await api.delete(`/comments/${id}`);
-    setAvaliacoes((prev) =>
-      prev.filter((a) => String(a.id) !== String(id))
-    );
-  } catch (error) {
-    console.error("Erro ao excluir comentário:", error);
-  }
-};
-
+    try {
+      await api.delete(`/comments/${id}`);
+      console.log("ID que vai excluir:", id);
+      console.log("Antes:", avaliacoes.map((a) => a.id));
+      setAvaliacoes((prev) =>
+        prev.filter((a) => String(a.id) !== String(id))
+      );
+      console.log("Depois:", avaliacoes.map((a) => a.id));
+    } catch (error) {
+      console.error("Erro ao excluir comentário:", error);
+    }
+  };
 
   const handleEdit = async (id: string) => {
     const comentario = avaliacoes.find((a) => a.id === id);
     if (!comentario) return;
-
 
     const novoComentario = prompt("Edite seu comentário:", comentario.comment);
     if (novoComentario && novoComentario.trim() !== "") {
@@ -92,11 +84,9 @@ export function Avaliacoes() {
     }
   };
 
-
   if (!currentUser) {
     return <Navigate to="/login" replace />;
   }
-
 
   return (
     <>
@@ -117,7 +107,6 @@ export function Avaliacoes() {
           )}
         </div>
 
-
         <div style={{ flex: 1 }}>
           <AvaliacaoForm post_id={post_id} onAdd={handleAdd} />
         </div>
@@ -126,5 +115,3 @@ export function Avaliacoes() {
     </>
   );
 }
-
-
