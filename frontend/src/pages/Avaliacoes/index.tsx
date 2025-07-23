@@ -61,13 +61,15 @@ export function Avaliacoes() {
 
 
   const handleDelete = async (id: string) => {
-    try {
-      await api.delete(`/comments/${id}`);
-      setAvaliacoes((prev) => prev.filter((a) => a.id !== id));
-    } catch (error) {
-      console.error("Erro ao excluir comentário:", error);
-    }
-  };
+  try {
+    await api.delete(`/comments/${id}`);
+    setAvaliacoes((prev) =>
+      prev.filter((a) => String(a.id) !== String(id))
+    );
+  } catch (error) {
+    console.error("Erro ao excluir comentário:", error);
+  }
+};
 
 
   const handleEdit = async (id: string) => {
