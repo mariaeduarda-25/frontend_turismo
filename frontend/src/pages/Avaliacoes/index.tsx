@@ -52,18 +52,14 @@ export function Avaliacoes() {
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      await api.delete(`/comments/${id}`);
-      console.log("ID que vai excluir:", id);
-      console.log("Antes:", avaliacoes.map((a) => a.id));
-      setAvaliacoes((prev) =>
-        prev.filter((a) => String(a.id) !== String(id))
-      );
-      console.log("Depois:", avaliacoes.map((a) => a.id));
-    } catch (error) {
-      console.error("Erro ao excluir comentário:", error);
-    }
-  };
+  try {
+    await api.delete(`/comments/${id}`);
+    await fetchData();
+  } catch (error) {
+    console.error("Erro ao excluir comentário:", error);
+  }
+};
+
 
   const handleEdit = async (id: string) => {
     const comentario = avaliacoes.find((a) => a.id === id);
