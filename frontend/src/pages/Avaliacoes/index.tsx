@@ -8,8 +8,7 @@ import { AvaliacaoList } from "../../components/AvaliacaoList";
 import { useAuth } from "../../contexts/AuthContext";
 import type { CommentProps } from "../../types/CommentType";
 import type { UserProps } from "../../types/UserType";
-import { api } from "../../services/http/axios"; 
-
+import { api } from "../../services/http/axios";
 
 export function Avaliacoes() {
   const { currentUser } = useAuth();
@@ -18,22 +17,22 @@ export function Avaliacoes() {
   const [avaliacoes, setAvaliacoes] = useState<CommentProps[]>([]);
   const [usuarios, setUsuarios] = useState<UserProps[]>([]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [commentsRes, usersRes] = await Promise.all([
-          api.get(`/comments`, { params: { post_id } }),
-          api.get(`/users`),
-        ]);
-        setAvaliacoes(commentsRes.data);
-        setUsuarios(usersRes.data);
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error);
-      }
+  async function fetchData() {
+    try {
+      const [commentsRes, usersRes] = await Promise.all([
+        api.get(`/comments/post/${post_id}`), 
+        api.get(`/users`),
+      ]);
+      setAvaliacoes(commentsRes.data);
+      setUsuarios(usersRes.data);
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
     }
+  }
 
+  useEffect(() => {
     fetchData();
-  }, []);
+  }, [post_id]); 
 
   const getUserNameById = (user_id: string) => {
     const user = usuarios.find((u) => u.id === user_id);
@@ -48,6 +47,7 @@ export function Avaliacoes() {
 
   const handleAdd = (newComment: CommentProps) => {
     setAvaliacoes((prev) => [...prev, newComment]);
+
   };
 
   const handleDelete = async (id: string) => {
