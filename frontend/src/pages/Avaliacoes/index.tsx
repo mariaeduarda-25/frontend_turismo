@@ -10,6 +10,7 @@ import type { CommentProps } from "../../types/CommentType";
 import type { UserProps } from "../../types/UserType";
 import { api } from "../../services/http/axios"; 
 
+
 export function Avaliacoes() {
   const { currentUser } = useAuth();
   const post_id = "post-1";
@@ -45,22 +46,8 @@ export function Avaliacoes() {
     return "Usuário Desconhecido";
   };
 
-  const handleSubmit = async (data: { comment: string }) => {
-    if (!currentUser) return;
-
-    const novaAvaliacao = {
-      post_id,
-      user_id: currentUser.id,
-      comment: data.comment,
-      date: new Date().toISOString(),
-    };
-
-    try {
-      const response = await api.post("/comments", novaAvaliacao);
-      setAvaliacoes((prev) => [...prev, response.data]);
-    } catch (error) {
-      console.error("Erro ao salvar comentário:", error);
-    }
+  const handleAdd = (newComment: CommentProps) => {
+    setAvaliacoes((prev) => [...prev, newComment]);
   };
 
   const handleDelete = async (id: string) => {
@@ -115,7 +102,7 @@ export function Avaliacoes() {
         </div>
 
         <div style={{ flex: 1 }}>
-          <AvaliacaoForm post_id={post_id} onSubmit={handleSubmit} />
+          <AvaliacaoForm post_id={post_id} onAdd={handleAdd} />
         </div>
       </Container>
       <Footer />

@@ -1,14 +1,16 @@
 import { useState, type FormEvent } from "react";
 import { SForm } from "../AvaliacaoForm/style";
 import { useComment } from "../../hooks/useComment";
+import type { CommentProps } from "../../types/CommentType";
+
 import { useAuth } from "../../hooks/useAuth";
 
 interface AvaliacaoFormProps {
   post_id: string;
-  onSubmit: (post: { comment: string }) => void;
+  onAdd: (newComment: CommentProps) => void;
 }
 
-export function AvaliacaoForm({ post_id, onSubmit }: AvaliacaoFormProps) {
+export function AvaliacaoForm({ post_id, onAdd }: AvaliacaoFormProps) {
   const [comment, setComment] = useState("");
   const [name, setName] = useState("");
   const { addComment } = useComment();
@@ -21,14 +23,14 @@ export function AvaliacaoForm({ post_id, onSubmit }: AvaliacaoFormProps) {
 
     setIsLoading(true);
     try {
-      await addComment({
+      const newComment = await addComment({
         post_id,
         user_id: currentUser.id,
         comment: comment.trim(),
       });
       setComment("");
       setName("");
-      onSubmit({ comment });
+      onAdd(newComment); // atualiza o state no pai
     } catch (error) {
       console.error("Falha ao adicionar o comentário:", error);
     } finally {
